@@ -13,15 +13,12 @@ TIMER_FILE="/etc/systemd/system/update-xray.timer"
 
 # Function to create the update script
 create_update_script() {
-    local action=$1
-    local username=$2
-    local logrotate=$3
 
     cat << EOF > "$SCRIPT_PATH"
 #!/bin/bash
 
 # Execute the command to install or update Xray
-bash -c "\$(curl -L https://github.com/evgenyzh/Xray-install/raw/main/install-release.sh)" @ $action $username $logrotate
+bash -c "\$(curl -L https://github.com/evgenyzh/Xray-install/raw/main/install-release.sh)" @ $@
 EOF
 
     chmod +x "$SCRIPT_PATH"
@@ -82,6 +79,13 @@ reload_and_start_timer() {
     fi
 }
 
+# Function to execute command
+execute_command () {
+    echo "Execute update:"
+    local command_run_status=$(eval "$SCRIPT_PATH")
+    echo "$command_run_status"
+}
+
 # Function to stop and remove the timer and service
 remove_timer_and_service() {
     echo "Stopping and disabling the timer and service..."
@@ -119,23 +123,33 @@ case "$COMMAND" in
             echo "Usage: $0 install <action> <username> [--logrotate <time>]"
             exit 1
         fi
-
+        
         ACTION=$1
-        USERNAME=$2
         LOGROTATE=""
+	LOGROTATE_TIME=""
+	if [ "$2" == "--logrotate" ] && [ -n "$3" ]; then	
+            USERNAME=""
+            LOGROTATE="--logrotate"
+	    LOGROTATE_TIME="$3"
+        else
+	    USERNAME="$2"
+	fi
+	
         if [ "$3" == "--logrotate" ] && [ -n "$4" ]; then
-            LOGROTATE="--logrotate $4"
+            LOGROTATE="--logrotate"
+	    LOGROTATE_TIME="$4"
         fi
 
         # Add -u prefix to USERNAME if not provided
-        if [[ "$USERNAME" != -* ]]; then
+        if [[ -n "$USERNAME" && "$USERNAME" != -* ]]; then
             USERNAME="-u $USERNAME"
         fi
-
-        create_update_script "$ACTION" "$USERNAME" "$LOGROTATE"
+        
+        create_update_script "$ACTION" "$USERNAME" "$LOGROTATE" "$LOGROTATE_TIME"
         create_service_file
         create_timer_file
         reload_and_start_timer
+	execute_command
         ;;
     stop)
         remove_timer_and_service
