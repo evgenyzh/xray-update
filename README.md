@@ -18,7 +18,7 @@ This script automates the installation, management, and removal of a scheduled s
 
 ### General Syntax
 ```bash
-./script.sh <install|stop|remove> [action] [username] [--logrotate <time>]
+./xray-autoupdate.sh <install|stop|remove> [action] [username] [--logrotate <time>]
 ```
 
 ### Commands
@@ -27,7 +27,7 @@ This script automates the installation, management, and removal of a scheduled s
 Installs the Xray update timer and service.
 
 ```bash
-./script.sh install <action> <username> [--logrotate <time>]
+./xray-autoupdate.sh install <action> <username> [--logrotate <time>]
 ```
 
 - `<action>`: The action to pass to the Xray installation script (e.g., `install`, `update`).
@@ -36,21 +36,21 @@ Installs the Xray update timer and service.
 
 Example:
 ```bash
-./script.sh install install xray_tproxy --logrotate weekly
+./xray-autoupdate.sh install install xray_tproxy --logrotate weekly
 ```
 
 #### Stop
 Stops and removes the systemd timer and service.
 
 ```bash
-./script.sh stop
+./xray-autoupdate.sh stop
 ```
 
 #### Remove
 Fully removes Xray, including the timer, service, update script, and running the official removal command.
 
 ```bash
-./script.sh remove
+./xray-autoupdate.sh remove
 ```
 
 ### Validation
@@ -71,11 +71,17 @@ After installation, the script checks the status of the `xray.service` and the `
 - Curl
 - Systemd
 
+## Running the script directly from GitHub
+
+```bash
+bash -c "$(curl -L https://raw.githubusercontent.com/evgenyzh/xray-update/main/xray-autoupdate.sh)" @ install install xray_tproxy --logrotate 02:30:10
+```
+
 ## Notes
 
 - Ensure the script is executable before running:
   ```bash
-  chmod +x script.sh
+  chmod +x xray-autoupdate.sh
   ```
 - The script automatically reloads systemd to apply changes.
 
