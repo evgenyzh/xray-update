@@ -76,6 +76,11 @@ After installation, the script checks the status of the `xray.service` and the `
 ```bash
 sudo bash -c "$(curl -L https://github.com/evgenyzh/xray-update/raw/main/xray-autoupdate.sh)" @ install install xray_tproxy --logrotate 02:30:10
 ```
+## Running the sccript directly from GitVerse
+
+```bash
+sudo bash -c "$(curl -L https://gitverse.ru/api/repos/evgenyzh/xray-update/raw/branch/main/xray-autoupdate.sh)" @ install install xray_tproxy --logrotate 02:30:10
+```
 
 ## Notes
 
